@@ -35,7 +35,6 @@ data class ComboOption(
 interface SelectableOption {
     val text: String
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MultiComboBox(
@@ -46,11 +45,17 @@ fun MultiComboBox(
     selectedIds: List<Int> = emptyList(),
 ) {
     var expanded by remember { mutableStateOf(false) }
+    // when no options available, I want ComboBox to be disabled
     val isEnabled by rememberUpdatedState { options.isNotEmpty() }
-    var selectedOptionsList = remember { mutableStateListOf<Int>() }
+    var selectedOptionsList  = remember { mutableStateListOf<Int>() }
 
-    selectedIds.forEach {
-        selectedOptionsList.add(it)
+    //Initial setup of selected ids
+    if (selectedIds.isNotEmpty()){
+
+        selectedOptionsList.clear()
+        selectedIds.forEach{
+            selectedOptionsList.add(it)
+        }
     }
 
     ExposedDropdownMenuBox(
@@ -84,7 +89,7 @@ fun MultiComboBox(
             },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.White,
-                textColor = Color.Black,
+                textColor = Color(0XFF0DA89B),
                 cursorColor = Color(0XFF0DA89B),
                 focusedIndicatorColor = Color(0XFF0DA89B),
                 unfocusedIndicatorColor = Color(0XFF0DA89B),
@@ -103,17 +108,15 @@ fun MultiComboBox(
 
                 //use derivedStateOf to evaluate if it is checked
                 var checked = remember {
-                    derivedStateOf { option.id in selectedOptionsList }
+                    derivedStateOf{option.id in selectedOptionsList}
                 }.value
 
                 DropdownMenuItem(
                     text = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                        Row(verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .background(Color.White)
-                                .fillMaxSize()
-                        ) {
+                                .fillMaxSize()) {
                             Checkbox(
                                 checked = checked,
                                 onCheckedChange = { newCheckedState ->
@@ -152,9 +155,10 @@ fun SingleComboBox(
     var expanded by remember { mutableStateOf(false) }
     // when no options available, I want ComboBox to be disabled
     val isEnabled by rememberUpdatedState { options.isNotEmpty() }
-    var selectedOptionsList = remember { mutableStateListOf<Int>() }
+    var selectedOptionsList  = remember { mutableStateListOf<Int>() }
 
-    selectedIds.forEach {
+    //Initial setup of selected ids
+    selectedIds.forEach{
         selectedOptionsList.add(it)
     }
 
@@ -182,7 +186,7 @@ fun SingleComboBox(
                 .fillMaxWidth(),
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.White,
-                textColor = Color.Black,
+                textColor = Color(0XFF0DA89B),
                 cursorColor = Color(0XFF0DA89B),
                 focusedIndicatorColor = Color(0XFF0DA89B),
                 unfocusedIndicatorColor = Color(0XFF0DA89B),
@@ -206,8 +210,9 @@ fun SingleComboBox(
         ) {
             for (option in options) {
 
+                //use derivedStateOf to evaluate if it is checked
                 var checked = remember {
-                    derivedStateOf { option.id in selectedOptionsList }
+                    derivedStateOf{option.id in selectedOptionsList}
                 }.value
 
                 DropdownMenuItem(
@@ -216,17 +221,19 @@ fun SingleComboBox(
                             Checkbox(
                                 checked = checked,
                                 onCheckedChange = { newCheckedState ->
-                                    if (selectedOptionsList.size == 0) {
+                                    if(selectedOptionsList.size == 0){
                                         if (newCheckedState) {
                                             selectedOptionsList.add(option.id)
                                         } else {
                                             selectedOptionsList.remove(option.id)
                                         }
-                                    } else {
+                                    } else
+                                    {
                                         if (newCheckedState) {
                                             selectedOptionsList.remove(selectedOptionsList.first())
                                             selectedOptionsList.add(option.id)
-                                        } else {
+                                        }
+                                        else {
                                             selectedOptionsList.remove(option.id)
                                         }
                                     }
@@ -238,7 +245,7 @@ fun SingleComboBox(
                     onClick = {
 
                         if (!checked) {
-                            if (selectedOptionsList.size == 0) {
+                            if (selectedOptionsList.size == 0){
                                 selectedOptionsList.add(option.id)
                             } else {
                                 selectedOptionsList.remove(selectedOptionsList.first())

@@ -1,4 +1,4 @@
-package proyectofinal.com.example.abc.ui.academic_data
+package proyectofinal.com.example.abc.ui.experience
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,18 +37,19 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import proyectofinal.com.example.abc.R
-
+import proyectofinal.com.example.abc.ui.academic_data.AcademicDataViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Preview
 @Composable
-fun AcademicDataScreen() {
-    val academicDataViewModel = AcademicDataViewModel()
+fun LaboralExperienceScreen() {
+    val laboralExperienceViewModel = LaboralExperienceViewModel()
 
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -101,14 +102,14 @@ fun AcademicDataScreen() {
             }
         }
     ) { innerPadding ->
-        MainContent(innerPadding, academicDataViewModel, keyboardController)
+        MainContent(innerPadding, laboralExperienceViewModel, keyboardController)
     }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MainContent(
-    padding: PaddingValues, academicDataViewModel: AcademicDataViewModel,
+    padding: PaddingValues, laboralExperienceViewModel: LaboralExperienceViewModel,
     keyboardController: SoftwareKeyboardController?
 ) {
     LazyColumn(
@@ -122,7 +123,7 @@ fun MainContent(
     {
         item {
             Text(
-                text = "Academic Data",
+                text = "Work experience",
                 style = MaterialTheme.typography.titleLarge,
                 color = Color.Black
             )
@@ -161,8 +162,8 @@ fun itemAcademicData() {
 
             Row(modifier = Modifier) {
                 Image(
-                    painter = painterResource(id = R.drawable.img_academic),
-                    contentDescription = "image_academic",
+                    painter = painterResource(id = R.drawable.img_work),
+                    contentDescription = "image_work",
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier
                         .height(100.dp)
@@ -174,12 +175,12 @@ fun itemAcademicData() {
                         .weight(3f)
                 ) {
                     val (name, carrer, time) = createRefs()
-                    Text(text = "University", modifier = Modifier
+                    Text(text = "Android Developer", modifier = Modifier
                         .constrainAs(name) {
                             top.linkTo(parent.top, margin = 2.dp)
                             start.linkTo(parent.start, margin = 20.dp)
                         }
-                        .fillMaxWidth(1f))
+                        .fillMaxWidth(1f), fontWeight = FontWeight.Bold)
                     Row(modifier = Modifier
                         .constrainAs(carrer) {
                             top.linkTo(parent.top)
@@ -187,7 +188,7 @@ fun itemAcademicData() {
                             start.linkTo(parent.start, margin = 20.dp)
                         }
                         .fillMaxWidth(1f)) {
-                        Text(text = "Carrera", modifier = Modifier.fillMaxWidth())
+                        Text(text = "Empresa", modifier = Modifier.fillMaxWidth())
                     }
                     Row(modifier = Modifier
                         .constrainAs(time) {
