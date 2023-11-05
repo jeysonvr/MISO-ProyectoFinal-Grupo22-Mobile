@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">ABC</string>
+    <string name="institute_education">Institute education</string>
+    <string name="degree">Degree</string>
+    <string name="start_date">Start date</string>
+    <string name="end_date">End date</string>
+    <string name="in_progress">In progress</string>
+    <string name="academic_data">Academic data</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+
+    <string name="company_name">Company name</string>
+    <string name="rol">Rol</string>
+    <string name="working">Currently work there</string>
+    <string name="work_experience">Work Experience</string>
+    <string name="description">About your work experience</string>
+
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+
+    <string name="profile">Profile</string>
+    <string name="technical_tests">Technical tests</string>
+    <string name="performance_evaluation">Performance evaluation</string>
+    <string name="interviews">Interviews</string>
+
+
+    <string name="name">Name</string>
+    <string name="age">Age</string>
+    <string name="phone">Phone</string>
+    <string name="languages">Languages</string>
+    <string name="soft_skills">Soft skills</string>
+    <string name="country">Country</string>
+    <string name="skills">Skills</string>
+    <string name="personal_data">Personal data</string>
+
+    <string name="full_name">Full name</string>
+    <string name="register">Register</string>
+    <string name="sign_up">Sign up</string>
+    <string name="already_account">Already have an account?</string>
+    <string name="hello">Hello,</string>
+</resources>

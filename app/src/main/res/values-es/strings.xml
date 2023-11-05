@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">ABC</string>
+    <string name="institute_education">Instituto de educación</string>
+    <string name="degree">Titulo</string>
+    <string name="start_date">Fecha de inicio</string>
+    <string name="end_date">Fecha de finalización</string>
+    <string name="in_progress">En progreso</string>
+    <string name="academic_data">Datos académicos</string>
+
+    <string name="cancel">Cancelar</string>
+    <string name="save">Guardar</string>
+
+    <string name="company_name">Nombre de la compañia</string>
+    <string name="rol">Rol</string>
+    <string name="working">Actualmente trabajo ahí</string>
+    <string name="work_experience">Experiencia laboral</string>
+    <string name="description">Descripción de actividades realizadas</string>
+
+    <string name="email">Correo</string>
+    <string name="password">Contraseña</string>
+    <string name="login">Iniciar sesión</string>
+
+    <string name="profile">Perfil</string>
+    <string name="technical_tests">Pruebas técnicas</string>
+    <string name="performance_evaluation">Evaluación de desempeño</string>
+    <string name="interviews">Entrevistas</string>
+
+
+    <string name="name">Nombre</string>
+    <string name="age">Edad</string>
+    <string name="phone">Número de teléfono</string>
+    <string name="languages">Idiomas</string>
+    <string name="soft_skills">Habilidades blandas</string>
+    <string name="country">País</string>
+    <string name="skills">Habilidades técnicas</string>
+    <string name="personal_data">Datos personales</string>
+
+    <string name="full_name">Nombre completo</string>
+    <string name="register">Registrarme</string>
+    <string name="sign_up">Registrarme</string>
+    <string name="already_account">¿Ya tienes una cuenta?</string>
+    <string name="hello">Hola,</string>
+</resources>
