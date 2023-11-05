@@ -33,11 +33,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import proyectofinal.com.example.abc.R
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavController
+import proyectofinal.com.example.abc.ui.personal_data.PersonalDataScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun MainScreen() {
+fun MainScreen(navController: NavController) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -55,31 +58,19 @@ fun MainScreen() {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Localized description"
-                        )
-                    }
                 },
                 actions = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Localized description"
-                        )
-                    }
                 },
                 scrollBehavior = scrollBehavior
             )
         },
     ) { innerPadding ->
-        MainContent(innerPadding)
+        MainContent(innerPadding, navController)
     }
 }
 
 @Composable
-fun MainContent(padding: PaddingValues) {
+fun MainContent(padding: PaddingValues, navController: NavController) {
     Column(
         modifier = Modifier.padding(
             top = 96.dp,
@@ -89,7 +80,7 @@ fun MainContent(padding: PaddingValues) {
         )
     ) {
         Text(
-            text = "Hola, Viviana",
+            text = stringResource(id = R.string.hello),
             style = MaterialTheme.typography.titleLarge,
             color = Color.Black
         )
@@ -106,6 +97,7 @@ fun MainContent(padding: PaddingValues) {
                             .padding(end = 10.dp)
                             .fillMaxSize()
                             .weight(1f)
+                            .clickable { navController.navigate("ProfileScreen") }
                     ) {
                         val (image, contentDescription) = createRefs()
 
@@ -122,8 +114,9 @@ fun MainContent(padding: PaddingValues) {
                                     end.linkTo(parent.end)
                                 }
                                 .fillMaxSize()
+
                         )
-                        Text(text = "Profile", modifier = Modifier.constrainAs(contentDescription) {
+                        Text(text = stringResource(id = R.string.profile), modifier = Modifier.constrainAs(contentDescription) {
                             top.linkTo(parent.top, margin = 100.dp)
                             bottom.linkTo(parent.bottom)
                             start.linkTo(parent.start)
@@ -152,7 +145,7 @@ fun MainContent(padding: PaddingValues) {
                                 }
                                 .fillMaxSize()
                         )
-                        Text(text = "Profile", modifier = Modifier.constrainAs(contentDescription) {
+                        Text(text = stringResource(id = R.string.technical_tests), modifier = Modifier.constrainAs(contentDescription) {
                             top.linkTo(parent.top, margin = 100.dp)
                             bottom.linkTo(parent.bottom)
                             start.linkTo(parent.start)
@@ -188,7 +181,7 @@ fun MainContent(padding: PaddingValues) {
                                 }
                                 .fillMaxSize()
                         )
-                        Text(text = "Profile", modifier = Modifier.constrainAs(contentDescription) {
+                        Text(text = stringResource(id = R.string.performance_evaluation), modifier = Modifier.constrainAs(contentDescription) {
                             top.linkTo(parent.top, margin = 100.dp)
                             bottom.linkTo(parent.bottom)
                             start.linkTo(parent.start)
@@ -217,7 +210,7 @@ fun MainContent(padding: PaddingValues) {
                                 }
                                 .fillMaxSize()
                         )
-                        Text(text = "Profile", modifier = Modifier.constrainAs(contentDescription) {
+                        Text(text = stringResource(id = R.string.interviews), modifier = Modifier.constrainAs(contentDescription) {
                             top.linkTo(parent.top, margin = 100.dp)
                             bottom.linkTo(parent.bottom)
                             start.linkTo(parent.start)

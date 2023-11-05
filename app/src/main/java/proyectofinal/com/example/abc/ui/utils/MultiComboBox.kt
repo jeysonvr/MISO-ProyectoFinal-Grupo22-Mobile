@@ -28,12 +28,13 @@ import androidx.compose.ui.unit.dp
 
 
 data class ComboOption(
-    override val text: String,
-    val id: Int,
+    override val descripcion: String,
+    override val id: Int,
 ) : SelectableOption
 
 interface SelectableOption {
-    val text: String
+    val id: Int
+    val descripcion: String
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,11 +49,11 @@ fun MultiComboBox(
     // when no options available, I want ComboBox to be disabled
     val isEnabled by rememberUpdatedState { options.isNotEmpty() }
     var selectedOptionsList  = remember { mutableStateListOf<Int>() }
-
+    selectedOptionsList.clear()
     //Initial setup of selected ids
     if (selectedIds.isNotEmpty()){
 
-        selectedOptionsList.clear()
+
         selectedIds.forEach{
             selectedOptionsList.add(it)
         }
@@ -72,7 +73,7 @@ fun MultiComboBox(
     ) {
         val selectedSummary = when (selectedOptionsList.size) {
             0 -> ""
-            1 -> options.first { it.id == selectedOptionsList.first() }.text
+            1 -> options.first { it.id == selectedOptionsList.first() }.descripcion
             else -> getSelectedOptions(selectedOptionsList, options)
         }
         TextField(
@@ -127,7 +128,7 @@ fun MultiComboBox(
                                     }
                                 },
                             )
-                            Text(text = option.text)
+                            Text(text = option.descripcion)
                         }
                     },
                     onClick = {
@@ -156,9 +157,10 @@ fun SingleComboBox(
     // when no options available, I want ComboBox to be disabled
     val isEnabled by rememberUpdatedState { options.isNotEmpty() }
     var selectedOptionsList  = remember { mutableStateListOf<Int>() }
-
+    selectedOptionsList.clear()
     //Initial setup of selected ids
     selectedIds.forEach{
+
         selectedOptionsList.add(it)
     }
 
@@ -176,7 +178,7 @@ fun SingleComboBox(
     ) {
         val selectedSummary = when (selectedOptionsList.size) {
             0 -> ""
-            1 -> options.first { it.id == selectedOptionsList.first() }.text
+            1 -> options.first { it.id == selectedOptionsList.first() }.descripcion
             else -> getSelectedOptions(selectedOptionsList, options)
         }
         TextField(
@@ -239,7 +241,7 @@ fun SingleComboBox(
                                     }
                                 },
                             )
-                            Text(text = option.text)
+                            Text(text = option.descripcion)
                         }
                     },
                     onClick = {
@@ -269,7 +271,7 @@ fun getSelectedOptions(selectedOptionsList: List<Int>, options: List<ComboOption
         if (selectedOptions.isNotEmpty()) {
             selectedOptions += ", "
         }
-        selectedOptions += options.first { it.id == selectedOption }.text
+        selectedOptions += options.first { it.id == selectedOption }.descripcion
     }
     return selectedOptions
 }

@@ -42,16 +42,18 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import proyectofinal.com.example.abc.ui.experience.LaboralExperienceViewModel
+import proyectofinal.com.example.abc.ui.utils.SharePreference
 import proyectofinal.com.example.abc.R
 import proyectofinal.com.example.abc.ui.utils.TextFieldABC
 @Preview
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun AcademicDataAddScreen() {
-    val academicDataViewModel = AcademicDataViewModel()
-
-
-
+fun AcademicDataAddScreen(navController: NavController, viewModel: AcademicDataViewModel = hiltViewModel()) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val keyboardController = LocalSoftwareKeyboardController.current
     Scaffold(
@@ -70,17 +72,9 @@ fun AcademicDataAddScreen() {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
                             contentDescription = "Localized description"
                         )
                     }
@@ -89,7 +83,7 @@ fun AcademicDataAddScreen() {
             )
         },
     ) { innerPadding ->
-        MainContentAdd(innerPadding, academicDataViewModel, keyboardController)
+        MainContentAdd(innerPadding, viewModel, keyboardController, navController)
     }
 }
 
@@ -97,19 +91,17 @@ fun AcademicDataAddScreen() {
 @Composable
 fun MainContentAdd(
     padding: PaddingValues, academicDataViewModel: AcademicDataViewModel,
-    keyboardController: SoftwareKeyboardController?
+    keyboardController: SoftwareKeyboardController?,
+    navController: NavController
 ) {
-    val labelPlace = "Institute education"
-    val labelCarrer = "Career"
-    val labelStartYear = "Start Year"
-    val labelFinalYear = "Final Year"
-    val labelInprogress = "In progress"
-    val labelAcademicData = "Academic Data"
 
     val instituteEducation: String by academicDataViewModel.instituteEducation.observeAsState(initial = "")
     val carrer: String by academicDataViewModel.carrer.observeAsState(initial = "")
     val startYear: String by academicDataViewModel.startYear.observeAsState(initial = "")
     val finalYear: String by academicDataViewModel.finalYear.observeAsState(initial = "")
+    val inProgress : Boolean by academicDataViewModel.inProgress.observeAsState(initial = false)
+    val sharePreference = SharePreference(LocalContext.current)
+    academicDataViewModel.getInfoUser(sharePreference)
     LazyColumn(
         modifier = Modifier.padding(
             top = 96.dp,
@@ -121,7 +113,7 @@ fun MainContentAdd(
     {
         item {
             Text(
-                text = labelAcademicData,
+                text = stringResource(id = R.string.academic_data),
                 style = MaterialTheme.typography.titleLarge,
                 color = Color.Black
             )
@@ -141,7 +133,7 @@ fun MainContentAdd(
         item {
             TextFieldABC(
                 textField = instituteEducation,
-                label = labelPlace,
+                label = stringResource(id = R.string.institute_education),
                 keyboardController = keyboardController,
                 modifier = Modifier.fillMaxWidth(),
                 onTextFieldChanged = { academicDataViewModel.onInstituteEducationChanged(it) })
@@ -149,7 +141,7 @@ fun MainContentAdd(
         item {
             TextFieldABC(
                 textField = carrer,
-                label = labelCarrer,
+                label = stringResource(id = R.string.degree),
                 keyboardController = keyboardController,
                 modifier = Modifier.fillMaxWidth(),
                 onTextFieldChanged = { academicDataViewModel.onCarrerChanged(it) })
@@ -157,7 +149,7 @@ fun MainContentAdd(
         item {
             TextFieldABC(
                 textField = startYear,
-                label = labelStartYear,
+                label = stringResource(id = R.string.start_date),
                 keyboardController = keyboardController,
                 modifier = Modifier.fillMaxWidth(),
                 onTextFieldChanged = { academicDataViewModel.onStartYearChanged(it) })
@@ -166,7 +158,7 @@ fun MainContentAdd(
         item {
             TextFieldABC(
                 textField = finalYear,
-                label = labelFinalYear,
+                label = stringResource(id = R.string.end_date),
                 keyboardController = keyboardController,
                 modifier = Modifier.fillMaxWidth(),
                 onTextFieldChanged = { academicDataViewModel.onFinalYearChanged(it) })
@@ -178,21 +170,21 @@ fun MainContentAdd(
                     .background(Color.White)
                     .fillMaxSize()) {
                 Checkbox(
-                    checked = true,
+                    checked = inProgress,
                     onCheckedChange = { newCheckedState ->
-                        academicDataViewModel.onProgress(newCheckedState)
+                        academicDataViewModel.inProgressChanged(newCheckedState)
                     },
                     colors = CheckboxDefaults.colors(
                         checkedColor = colorResource(id = R.color.borderText)
                     )
                 )
-                Text(text = labelInprogress)
+                Text(text = stringResource(id = R.string.in_progress))
             }
         }
         item {
             Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.popBackStack() },
                     modifier = Modifier
                         .padding(end = 20.dp, top = 70.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -201,10 +193,16 @@ fun MainContentAdd(
                     shape = RectangleShape,
                     border = BorderStroke(1.dp, Color.Black),
                 ) {
-                    Text(text = "Cancelar", color = Color.Black)
+                    Text(text = stringResource(id = R.string.cancel), color = Color.Black)
                 }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { academicDataViewModel.onSaveClicked {
+                        navController.navigate("AcademicDataScreen") {
+                            popUpTo("AcademicDataScreen") {
+                                inclusive = true
+                            }
+                        }
+                    } },
 
                     modifier = Modifier
                         .padding(start = 20.dp, top = 70.dp),
@@ -213,7 +211,7 @@ fun MainContentAdd(
                     ),
                     shape = RectangleShape,
                 ) {
-                    Text(text = "Guardar", color = Color.White)
+                    Text(text = stringResource(id = R.string.save), color = Color.White)
                 }
             }
         }

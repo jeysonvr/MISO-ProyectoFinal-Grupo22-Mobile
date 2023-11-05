@@ -43,11 +43,14 @@ import proyectofinal.com.example.abc.ui.utils.ComboOption
 import proyectofinal.com.example.abc.ui.utils.MultiComboBox
 import proyectofinal.com.example.abc.ui.utils.SingleComboBox
 import proyectofinal.com.example.abc.ui.utils.TextFieldABC
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavController
+import proyectofinal.com.example.abc.ui.utils.SharePreference
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
-@Preview
 @Composable
-fun PersonalDataScreen() {
+fun PersonalDataScreen(navController: NavController) {
     val personalDataViewModel = PersonalDataViewModel()
 
 
@@ -70,17 +73,9 @@ fun PersonalDataScreen() {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
                             contentDescription = "Localized description"
                         )
                     }
@@ -89,7 +84,7 @@ fun PersonalDataScreen() {
             )
         },
     ) { innerPadding ->
-        MainContent(innerPadding, personalDataViewModel, keyboardController)
+        MainContent(innerPadding, personalDataViewModel, keyboardController, navController)
     }
 }
 
@@ -97,28 +92,29 @@ fun PersonalDataScreen() {
 @Composable
 fun MainContent(
     padding: PaddingValues, personalDataViewModel: PersonalDataViewModel,
-    keyboardController: SoftwareKeyboardController?
+    keyboardController: SoftwareKeyboardController?,
+    navController: NavController
 ) {
-    val labelName = "Name"
-    val labelEmail = "Email"
-    val labelAge = "Age"
-    val labelPhone = "Phone"
-    val labelLanguages = "Languages"
-    val labelSoftSkills = "Soft Skills"
-    val labelCountry = "Country"
-
     val email: String by personalDataViewModel.email.observeAsState(initial = "")
     val name: String by personalDataViewModel.fullName.observeAsState(initial = "")
     val age: String by personalDataViewModel.edad.observeAsState(initial = "")
     val phone: String by personalDataViewModel.phone.observeAsState(initial = "")
-    val country: List<ComboOption> by personalDataViewModel.paises.observeAsState(initial = listOf())
+    val countries: List<ComboOption> by personalDataViewModel.countries.observeAsState(initial = listOf())
     val languages: List<ComboOption> by personalDataViewModel.languages.observeAsState(initial = listOf())
     val softSkills: List<ComboOption> by personalDataViewModel.softSkills.observeAsState(initial = listOf())
-    val listadoPaises: List<ComboOption> = listOf<ComboOption>(
-        ComboOption("Colombia", 1),
-        ComboOption("Peru", 2),
-        ComboOption("Ecuador", 3)
+    val skills: List<ComboOption> by personalDataViewModel.skills.observeAsState(initial = listOf())
+    val countrySelected: List<ComboOption> by personalDataViewModel.countrySelected.observeAsState(initial = listOf())
+    val languagesSelected: List<ComboOption> by personalDataViewModel.languagesSelected.observeAsState(
+        initial = listOf()
     )
+    val softSkillsSelected: List<ComboOption> by personalDataViewModel.softSkillsSelected.observeAsState(
+        initial = listOf()
+    )
+    val skillsSelected: List<ComboOption> by personalDataViewModel.skillsSelected.observeAsState(
+        initial = listOf()
+    )
+    val sharePreference = SharePreference(LocalContext.current)
+    personalDataViewModel.getInfoInicial(sharePreference)
     LazyColumn(
         modifier = Modifier.padding(
             top = 96.dp,
@@ -130,7 +126,7 @@ fun MainContent(
     {
         item {
             Text(
-                text = "Personal Data",
+                text = stringResource(id = R.string.personal_data),
                 style = MaterialTheme.typography.titleLarge,
                 color = Color.Black
             )
@@ -150,7 +146,7 @@ fun MainContent(
         item {
             TextFieldABC(
                 textField = name,
-                label = labelName,
+                label = stringResource(id = R.string.name),
                 keyboardController = keyboardController,
                 modifier = Modifier.fillMaxWidth(),
                 onTextFieldChanged = { personalDataViewModel.onFullNameChanged(it) })
@@ -158,54 +154,67 @@ fun MainContent(
         item {
             TextFieldABC(
                 textField = age,
-                label = labelAge,
+                label = stringResource(id = R.string.age),
                 keyboardController = keyboardController,
                 modifier = Modifier.fillMaxWidth(),
-                onTextFieldChanged = { personalDataViewModel.onFullNameChanged(it) })
+                onTextFieldChanged = { personalDataViewModel.onAgeChanged(it) })
         }
         item {
             TextFieldABC(
                 textField = email,
-                label = labelEmail,
+                label = stringResource(id = R.string.email),
+                isEditable = false,
                 keyboardController = keyboardController,
                 modifier = Modifier.fillMaxWidth(),
-                onTextFieldChanged = { personalDataViewModel.onFullNameChanged(it) })
+                onTextFieldChanged = { })
 
         }
         item {
             TextFieldABC(
                 textField = phone,
-                label = labelPhone,
+                label = stringResource(id = R.string.phone),
                 keyboardController = keyboardController,
                 modifier = Modifier.fillMaxWidth(),
-                onTextFieldChanged = { personalDataViewModel.onFullNameChanged(it) })
+                onTextFieldChanged = { personalDataViewModel.onPhoneChanged(it) })
         }
 
         item {
             SingleComboBox(
-                labelText = "Country",
-                options = listadoPaises,
+                labelText = stringResource(id = R.string.country),
+                options = countries,
                 modifier = Modifier.fillMaxWidth(),
-                onOptionsChosen = { personalDataViewModel.onPaisesChanged(it) })
+                onOptionsChosen = { personalDataViewModel.onPaisesChanged(it) },
+                selectedIds = countrySelected.map { it.id })
         }
         item {
             MultiComboBox(
-                labelText = "Languages",
-                options = listadoPaises,
+                labelText = stringResource(id = R.string.languages),
+                options = languages,
                 modifier = Modifier.fillMaxWidth(),
-                onOptionsChosen = { personalDataViewModel.onPaisesChanged(it) })
+                onOptionsChosen = { personalDataViewModel.onLanguagesChanged(it) },
+                selectedIds = languagesSelected.map { it.id }
+            )
         }
         item {
             MultiComboBox(
-                labelText = "Soft Skills",
-                options = listadoPaises,
+                labelText = stringResource(id = R.string.soft_skills),
+                options = softSkills,
                 modifier = Modifier.fillMaxWidth(),
-                onOptionsChosen = { personalDataViewModel.onPaisesChanged(it) })
+                onOptionsChosen = { personalDataViewModel.onSoftSkillsChanged(it) },
+                selectedIds = softSkillsSelected.map { it.id })
+        }
+        item {
+            MultiComboBox(
+                labelText = stringResource(id = R.string.skills),
+                options = skills,
+                modifier = Modifier.fillMaxWidth(),
+                onOptionsChosen = { personalDataViewModel.onSkillsChanged(it) },
+                selectedIds = skillsSelected.map { it.id })
         }
         item {
             Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.popBackStack()},
                     modifier = Modifier
                         .padding(end = 20.dp, top = 70.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -214,10 +223,17 @@ fun MainContent(
                     shape = RectangleShape,
                     border = BorderStroke(1.dp, Color.Black),
                 ) {
-                    Text(text = "Cancelar", color = Color.Black)
+                    Text(text = stringResource(id = R.string.cancel), color = Color.Black)
                 }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { personalDataViewModel.onSaveInfoClicked(onSaveSuccess = {
+                        navController.navigate("ProfileScreen") {
+                            popUpTo("ProfileScreen") {
+                                inclusive = true
+
+                            }
+                        }
+                    }) },
 
                     modifier = Modifier
                         .padding(start = 20.dp, top = 70.dp),
@@ -226,11 +242,10 @@ fun MainContent(
                     ),
                     shape = RectangleShape,
                 ) {
-                    Text(text = "Guardar", color = Color.White)
+                    Text(text = stringResource(id = R.string.save), color = Color.White)
                 }
             }
         }
 
     }
 }
-

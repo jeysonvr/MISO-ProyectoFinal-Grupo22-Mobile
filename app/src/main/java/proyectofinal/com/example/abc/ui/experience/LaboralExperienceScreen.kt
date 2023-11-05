@@ -43,15 +43,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import proyectofinal.com.example.abc.R
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import proyectofinal.com.example.abc.model.ExperienciaOut
+import proyectofinal.com.example.abc.ui.utils.SharePreference
 import proyectofinal.com.example.abc.ui.academic_data.AcademicDataViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
-@Preview
 @Composable
-fun LaboralExperienceScreen() {
-    val laboralExperienceViewModel = LaboralExperienceViewModel()
-
-
+fun LaboralExperienceScreen(navController: NavController, viewModel: LaboralExperienceViewModel = hiltViewModel()) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val keyboardController = LocalSoftwareKeyboardController.current
     Scaffold(
@@ -70,17 +74,9 @@ fun LaboralExperienceScreen() {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
                             contentDescription = "Localized description"
                         )
                     }
@@ -90,7 +86,7 @@ fun LaboralExperienceScreen() {
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* TODO: Add a new academic data */ },
+                onClick = { navController.navigate("AddLaboralExperienceScreen") },
                 containerColor = colorResource(id = R.color.colorButtodAdd),
                 shape = CircleShape,
             ) {
@@ -102,7 +98,7 @@ fun LaboralExperienceScreen() {
             }
         }
     ) { innerPadding ->
-        MainContent(innerPadding, laboralExperienceViewModel, keyboardController)
+        MainContent(innerPadding, viewModel, keyboardController)
     }
 }
 
@@ -112,6 +108,9 @@ fun MainContent(
     padding: PaddingValues, laboralExperienceViewModel: LaboralExperienceViewModel,
     keyboardController: SoftwareKeyboardController?
 ) {
+    val laboralExperienceList: List<ExperienciaOut>  by laboralExperienceViewModel.listExperience.observeAsState(initial = listOf())
+    val sharePreference = SharePreference(LocalContext.current)
+    laboralExperienceViewModel.getInfoUser(sharePreference)
     LazyColumn(
         modifier = Modifier.padding(
             top = 96.dp,
@@ -123,7 +122,7 @@ fun MainContent(
     {
         item {
             Text(
-                text = "Work experience",
+                text = stringResource(id = R.string.work_experience),
                 style = MaterialTheme.typography.titleLarge,
                 color = Color.Black
             )
@@ -146,17 +145,21 @@ fun MainContent(
                     .width(200.dp)
             )
         }
-        item {
-            itemAcademicData()
+        if (laboralExperienceList.isEmpty()) {
+
+        } else {
+            laboralExperienceList.forEach {
+                item {
+                    itemAcademicData(rol = it.Rol.rol, companyName = it.nombre_empresa, startDate = it.fecha_inicio, endDate = it.fecha_fin)
+                }
+            }
         }
 
 
     }
 }
-
-@Preview
 @Composable
-fun itemAcademicData() {
+fun itemAcademicData(rol:String?, companyName: String?, startDate: String?, endDate: String?) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Column {
 
@@ -175,7 +178,7 @@ fun itemAcademicData() {
                         .weight(3f)
                 ) {
                     val (name, carrer, time) = createRefs()
-                    Text(text = "Android Developer", modifier = Modifier
+                    Text(text = rol!!, modifier = Modifier
                         .constrainAs(name) {
                             top.linkTo(parent.top, margin = 2.dp)
                             start.linkTo(parent.start, margin = 20.dp)
@@ -188,7 +191,7 @@ fun itemAcademicData() {
                             start.linkTo(parent.start, margin = 20.dp)
                         }
                         .fillMaxWidth(1f)) {
-                        Text(text = "Empresa", modifier = Modifier.fillMaxWidth())
+                        Text(text = companyName!!, modifier = Modifier.fillMaxWidth())
                     }
                     Row(modifier = Modifier
                         .constrainAs(time) {
@@ -196,15 +199,15 @@ fun itemAcademicData() {
                             start.linkTo(parent.start, margin = 20.dp)
                         }
                         .fillMaxWidth(1f)) {
-                        Text(text = "2022 - 2024", modifier = Modifier.fillMaxWidth())
+                        Text(text = "$startDate - $endDate", modifier = Modifier.fillMaxWidth())
                     }
                 }
 
-                Image(
+                /*Image(
                     painter = painterResource(id = R.drawable.outline_delete_24),
                     contentDescription = "delete",
                     modifier = Modifier.weight(1f)
-                )
+                )*/
             }
             Spacer(
                 modifier = Modifier

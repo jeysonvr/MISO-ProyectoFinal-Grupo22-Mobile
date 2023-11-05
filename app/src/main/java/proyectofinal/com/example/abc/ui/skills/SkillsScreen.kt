@@ -213,7 +213,7 @@ fun skillSelectedConstrain(skill : ComboOption,skillsViewModel: SkillsViewModel)
                     bottom.linkTo(parent.bottom)
                     end.linkTo(erase.start)
                     width = Dimension.preferredWrapContent
-                }, text = skill.text,
+                }, text = skill.descripcion,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

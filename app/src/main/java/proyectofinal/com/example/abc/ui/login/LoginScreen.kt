@@ -28,17 +28,21 @@ import proyectofinal.com.example.abc.R
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import proyectofinal.com.example.abc.ui.utils.TextFieldABC
+import proyectofinal.com.example.abc.ui.main_menu.MainScreen
+import proyectofinal.com.example.abc.ui.utils.TextFieldPasswordABC
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavController
+import proyectofinal.com.example.abc.ui.utils.SharePreference
 
 @OptIn(ExperimentalComposeUiApi::class)
-@Preview
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController) {
     val viewModel = LoginViewModel()
-    val labelEmail = "Email"
-    val labelPassword = "Password"
     val email: String by viewModel.email.observeAsState(initial = "")
     val password: String by viewModel.password.observeAsState(initial = "")
     val keyboardController = LocalSoftwareKeyboardController.current
+    val sharePreference = SharePreference(LocalContext.current)
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.background_login),
@@ -68,7 +72,7 @@ fun LoginScreen() {
             item {
 
                 Text(
-                    text = "Registrarme",
+                    text = stringResource(id = R.string.login),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(top = 60.dp, bottom = 100.dp),
                     style = TextStyle(
@@ -80,20 +84,28 @@ fun LoginScreen() {
             item {
                 TextFieldABC(
                     textField = email,
-                    labelEmail,
+                    stringResource(id = R.string.email),
                     keyboardController = keyboardController,
                     onTextFieldChanged = { viewModel.onEmailChanged(it) })
             }
             item {
-                TextFieldABC(
+                TextFieldPasswordABC(
                     textField = password,
-                    labelPassword,
+                    stringResource(id = R.string.password),
                     keyboardController = keyboardController,
                     onTextFieldChanged = { viewModel.onPasswordChanged(it) })
             }
             item {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        viewModel.onLoginClicked(sharePreference, onLoginSucces = {
+                            navController.navigate("mainScreenNavigation") {
+                                popUpTo("welcome") {
+                                    inclusive = true
+                                }
+                            }
+                        })
+                    },
 
                     modifier = Modifier
                         .padding(16.dp, top = 70.dp)
@@ -102,10 +114,10 @@ fun LoginScreen() {
                         Color(0XFF0DA89B)
                     ),
                 ) {
-                    Text(text = "Login", color = Color.White)
+                    Text(text = stringResource(id = R.string.login), color = Color.White)
                 }
             }
         }
     }
-}
 
+}

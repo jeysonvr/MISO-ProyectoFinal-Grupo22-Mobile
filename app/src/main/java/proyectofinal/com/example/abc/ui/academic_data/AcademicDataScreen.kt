@@ -28,27 +28,34 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import proyectofinal.com.example.abc.R
+import proyectofinal.com.example.abc.model.InformacionAcademicaOut
+import proyectofinal.com.example.abc.ui.utils.ComboOption
+import proyectofinal.com.example.abc.ui.utils.SharePreference
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
-@Preview
 @Composable
-fun AcademicDataScreen() {
-    val academicDataViewModel = AcademicDataViewModel()
+fun AcademicDataScreen(navController: NavController, viewModel: AcademicDataViewModel = hiltViewModel()) {
 
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -69,17 +76,9 @@ fun AcademicDataScreen() {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
                             contentDescription = "Localized description"
                         )
                     }
@@ -89,7 +88,7 @@ fun AcademicDataScreen() {
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* TODO: Add a new academic data */ },
+                onClick = { navController.navigate("AcademicDataAddScreen") },
                 containerColor = colorResource(id = R.color.colorButtodAdd),
                 shape = CircleShape,
             ) {
@@ -101,7 +100,7 @@ fun AcademicDataScreen() {
             }
         }
     ) { innerPadding ->
-        MainContent(innerPadding, academicDataViewModel, keyboardController)
+        MainContent(innerPadding, viewModel, keyboardController)
     }
 }
 
@@ -111,6 +110,9 @@ fun MainContent(
     padding: PaddingValues, academicDataViewModel: AcademicDataViewModel,
     keyboardController: SoftwareKeyboardController?
 ) {
+    val sharePreference = SharePreference(LocalContext.current)
+    val listAcademic : List<InformacionAcademicaOut> by academicDataViewModel.listAcademic.observeAsState(initial = listOf())
+    academicDataViewModel.getInfoUser(sharePreference = sharePreference)
     LazyColumn(
         modifier = Modifier.padding(
             top = 96.dp,
@@ -122,7 +124,7 @@ fun MainContent(
     {
         item {
             Text(
-                text = "Academic Data",
+                text = stringResource(id = R.string.academic_data),
                 style = MaterialTheme.typography.titleLarge,
                 color = Color.Black
             )
@@ -145,17 +147,22 @@ fun MainContent(
                     .width(200.dp)
             )
         }
-        item {
-            itemAcademicData()
+        if (listAcademic.isNotEmpty()) {
+            listAcademic.forEach {
+                item {
+                    itemAcademicData(it.institucion, it.titulo, it.fecha_inicio, it.fecha_fin)
+                }
+            }
+        } else {
+
         }
 
 
     }
 }
 
-@Preview
 @Composable
-fun itemAcademicData() {
+fun itemAcademicData(name: String?, carrer: String?, startTime: String?, endTime: String?) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Column {
 
@@ -173,21 +180,21 @@ fun itemAcademicData() {
                         .height(100.dp)
                         .weight(3f)
                 ) {
-                    val (name, carrer, time) = createRefs()
-                    Text(text = "University", modifier = Modifier
-                        .constrainAs(name) {
+                    val (nameConstraint, carrerConstraint, time) = createRefs()
+                    Text(text = name!! , modifier = Modifier
+                        .constrainAs(nameConstraint) {
                             top.linkTo(parent.top, margin = 2.dp)
                             start.linkTo(parent.start, margin = 20.dp)
                         }
                         .fillMaxWidth(1f))
                     Row(modifier = Modifier
-                        .constrainAs(carrer) {
+                        .constrainAs(carrerConstraint) {
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                             start.linkTo(parent.start, margin = 20.dp)
                         }
                         .fillMaxWidth(1f)) {
-                        Text(text = "Carrera", modifier = Modifier.fillMaxWidth())
+                        Text(text = carrer!!, modifier = Modifier.fillMaxWidth())
                     }
                     Row(modifier = Modifier
                         .constrainAs(time) {
@@ -195,15 +202,15 @@ fun itemAcademicData() {
                             start.linkTo(parent.start, margin = 20.dp)
                         }
                         .fillMaxWidth(1f)) {
-                        Text(text = "2022 - 2024", modifier = Modifier.fillMaxWidth())
+                        Text(text = "$startTime - $endTime", modifier = Modifier.fillMaxWidth())
                     }
                 }
 
-                Image(
+                /*Image(
                     painter = painterResource(id = R.drawable.outline_delete_24),
                     contentDescription = "delete",
                     modifier = Modifier.weight(1f)
-                )
+                )*/
             }
             Spacer(
                 modifier = Modifier

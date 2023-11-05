@@ -44,17 +44,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import proyectofinal.com.example.abc.R
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import proyectofinal.com.example.abc.ui.utils.ComboOption
+import proyectofinal.com.example.abc.ui.utils.SharePreference
+import proyectofinal.com.example.abc.ui.utils.SingleComboBox
 import proyectofinal.com.example.abc.ui.academic_data.AcademicDataViewModel
 import proyectofinal.com.example.abc.ui.utils.TextFieldABC
 
-@Preview
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun LaboralExperienceAddScreen() {
-    val laboralExperienceViewModel = LaboralExperienceViewModel()
-
-
-
+fun LaboralExperienceAddScreen(navController: NavController,viewModel: LaboralExperienceViewModel = hiltViewModel()) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val keyboardController = LocalSoftwareKeyboardController.current
     Scaffold(
@@ -73,17 +75,9 @@ fun LaboralExperienceAddScreen() {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
                             contentDescription = "Localized description"
                         )
                     }
@@ -92,7 +86,7 @@ fun LaboralExperienceAddScreen() {
             )
         },
     ) { innerPadding ->
-        MainContentAdd(innerPadding, laboralExperienceViewModel, keyboardController)
+        MainContentAdd(innerPadding, viewModel, keyboardController, navController)
     }
 }
 
@@ -100,22 +94,19 @@ fun LaboralExperienceAddScreen() {
 @Composable
 fun MainContentAdd(
     padding: PaddingValues, laboralExperienceViewModel: LaboralExperienceViewModel,
-    keyboardController: SoftwareKeyboardController?
+    keyboardController: SoftwareKeyboardController?, navController: NavController
 ) {
-    val labelCompany = "Company name"
-    val labelRol = "Rol"
-    val labelActuallyWork = "Actually work here"
-    val labelStartYear = "Start Year"
-    val labelFinalYear = "Final Year"
-    val labelLaboralExperience = "Laboral Experience"
-    val labelDescription = "Description about your experience"
-
-
     val companyName: String by laboralExperienceViewModel.companyName.observeAsState(initial = "")
-    val rol: String by laboralExperienceViewModel.rol.observeAsState(initial = "")
-    val startYear: String by laboralExperienceViewModel.startYear.observeAsState(initial = "")
-    val finalYear: String by laboralExperienceViewModel.finalYear.observeAsState(initial = "")
+    val startYear: String by laboralExperienceViewModel.startDate.observeAsState(initial = "")
+    val finalYear: String by laboralExperienceViewModel.finalDate.observeAsState(initial = "")
     val description: String by laboralExperienceViewModel.description.observeAsState(initial = "")
+    val workHere : Boolean by laboralExperienceViewModel.workHere.observeAsState(initial = false)
+    val roles : List<ComboOption> by laboralExperienceViewModel.roles.observeAsState(initial = listOf())
+    val rolSelected: List<ComboOption> by laboralExperienceViewModel.rolSelected.observeAsState(
+        initial = listOf()
+    )
+    val sharePreference = SharePreference(LocalContext.current)
+    laboralExperienceViewModel.getMetaData(sharePreference = sharePreference)
     LazyColumn(
         modifier = Modifier.padding(
             top = 96.dp,
@@ -127,7 +118,7 @@ fun MainContentAdd(
     {
         item {
             Text(
-                text = labelLaboralExperience,
+                text = stringResource(id = R.string.work_experience),
                 style = MaterialTheme.typography.titleLarge,
                 color = Color.Black
             )
@@ -147,18 +138,18 @@ fun MainContentAdd(
         item {
             TextFieldABC(
                 textField = companyName,
-                label = labelCompany,
+                label = stringResource(id = R.string.company_name),
                 keyboardController = keyboardController,
                 modifier = Modifier.fillMaxWidth(),
                 onTextFieldChanged = { laboralExperienceViewModel.onCompanyNameChanged(it) })
         }
         item {
-            TextFieldABC(
-                textField = rol,
-                label = labelRol,
-                keyboardController = keyboardController,
+            SingleComboBox(
+                options = roles,
+                selectedIds = rolSelected.map { it.id },
+                labelText = stringResource(id = R.string.rol),
                 modifier = Modifier.fillMaxWidth(),
-                onTextFieldChanged = { laboralExperienceViewModel.onRolChanged(it) })
+                onOptionsChosen = { laboralExperienceViewModel.onRolChanged(it) })
         }
         item {
             Row(verticalAlignment = Alignment.CenterVertically,
@@ -166,7 +157,7 @@ fun MainContentAdd(
                     .background(Color.White)
                     .fillMaxSize()) {
                 Checkbox(
-                    checked = true,
+                    checked = workHere,
                     onCheckedChange = { newCheckedState ->
                         laboralExperienceViewModel.onWorkHere(newCheckedState)
                     },
@@ -174,40 +165,41 @@ fun MainContentAdd(
                         checkedColor = colorResource(id = R.color.borderText)
                     )
                 )
-                Text(text = labelActuallyWork)
+                Text(text = stringResource(id = R.string.working))
             }
         }
         item {
             TextFieldABC(
                 textField = startYear,
-                label = labelStartYear,
+                label = stringResource(id = R.string.start_date),
                 keyboardController = keyboardController,
                 modifier = Modifier.fillMaxWidth(),
-                onTextFieldChanged = { laboralExperienceViewModel.onStartYearChanged(it) })
+                onTextFieldChanged = { laboralExperienceViewModel.onStartDateChanged(it) })
 
         }
         item {
             TextFieldABC(
                 textField = finalYear,
-                label = labelFinalYear,
+                label = stringResource(id = R.string.end_date),
                 keyboardController = keyboardController,
                 modifier = Modifier.fillMaxWidth(),
-                onTextFieldChanged = { laboralExperienceViewModel.onFinalYearChanged(it) })
+                isEditable = !workHere,
+                onTextFieldChanged = { laboralExperienceViewModel.onFinalDateChanged(it) })
         }
         item {
             TextFieldABC(
                 textField = description,
-                label = labelDescription,
+                label = stringResource(id = R.string.description),
                 keyboardController = keyboardController,
                 modifier = Modifier.fillMaxWidth().height(200.dp),
-                onTextFieldChanged = { laboralExperienceViewModel.onCompanyNameChanged(it) })
+                onTextFieldChanged = { laboralExperienceViewModel.onDescriptionChanged(it) })
         }
 
 
         item {
             Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.popBackStack()},
                     modifier = Modifier
                         .padding(end = 20.dp, top = 70.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -216,10 +208,18 @@ fun MainContentAdd(
                     shape = RectangleShape,
                     border = BorderStroke(1.dp, Color.Black),
                 ) {
-                    Text(text = "Cancelar", color = Color.Black)
+                    Text(text = stringResource(id = R.string.cancel), color = Color.Black)
                 }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { laboralExperienceViewModel.onSave(
+                        onSaveSuccess = {
+                            navController.navigate("LaboralExperienceScreen") {
+                                popUpTo("LaboralExperienceScreen") {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    ) },
 
                     modifier = Modifier
                         .padding(start = 20.dp, top = 70.dp),
@@ -228,7 +228,7 @@ fun MainContentAdd(
                     ),
                     shape = RectangleShape,
                 ) {
-                    Text(text = "Guardar", color = Color.White)
+                    Text(text = stringResource(id = R.string.save), color = Color.White)
                 }
             }
         }
