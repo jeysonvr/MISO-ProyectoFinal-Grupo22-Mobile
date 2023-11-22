@@ -7,22 +7,20 @@ import proyectofinal.com.example.abc.model.LoginResponseDTO
 
 class SharePreference(context : Context)
 {
-    val context = context
     val prefs: SharedPreferences = context.getSharedPreferences("", Context.MODE_PRIVATE)
+    private val editor: SharedPreferences.Editor = prefs.edit()
 
     fun getString(key: String ) : String?{
 
         return prefs.getString(key, "")
     }
     fun setString(key: String, value: String) {
-        val editor = prefs.edit()
         editor.putString(key,value)
         editor.apply()
     }
     fun setUserLogged(value: LoginResponseDTO){
         val gson = Gson()
         val objetoComoJson = gson.toJson(value)
-        val editor = prefs.edit()
         editor.putString("user", objetoComoJson)
         editor.apply()
     }

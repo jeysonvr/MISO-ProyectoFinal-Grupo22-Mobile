@@ -52,6 +52,7 @@ import androidx.navigation.NavController
 import proyectofinal.com.example.abc.model.ExperienciaOut
 import proyectofinal.com.example.abc.ui.utils.SharePreference
 import proyectofinal.com.example.abc.ui.academic_data.AcademicDataViewModel
+import org.junit.experimental.categories.Categories.ExcludeCategory
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -108,7 +109,7 @@ fun MainContent(
     padding: PaddingValues, laboralExperienceViewModel: LaboralExperienceViewModel,
     keyboardController: SoftwareKeyboardController?
 ) {
-    val laboralExperienceList: List<ExperienciaOut>  by laboralExperienceViewModel.listExperience.observeAsState(initial = listOf())
+    val laboralExperienceList: List<ExperienciaOut>?  by laboralExperienceViewModel.listExperience!!.observeAsState(initial = listOf())
     val sharePreference = SharePreference(LocalContext.current)
     laboralExperienceViewModel.getInfoUser(sharePreference)
     LazyColumn(
@@ -145,13 +146,19 @@ fun MainContent(
                     .width(200.dp)
             )
         }
-        if (laboralExperienceList.isEmpty()) {
-
-        } else {
-            laboralExperienceList.forEach {
+        if (laboralExperienceList?.isNotEmpty() == true) {
+            laboralExperienceList!!.forEach {
                 item {
                     itemAcademicData(rol = it.Rol.rol, companyName = it.nombre_empresa, startDate = it.fecha_inicio, endDate = it.fecha_fin)
                 }
+            }
+        } else {
+            item {
+                Text(
+                    text = stringResource(id = R.string.no_experience),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.Black
+                )
             }
         }
 

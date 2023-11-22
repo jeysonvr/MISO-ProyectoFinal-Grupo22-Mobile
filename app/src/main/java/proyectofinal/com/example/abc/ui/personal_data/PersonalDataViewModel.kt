@@ -36,24 +36,24 @@ class PersonalDataViewModel: ViewModel() {
     private val _countrySelected = MutableLiveData<List<ComboOption>>()
     val countrySelected: LiveData<List<ComboOption>> = _countrySelected
     private val _languagesSelected = MutableLiveData<List<ComboOption>>()
-    val languagesSelected: LiveData<List<ComboOption>> = _languagesSelected
+    val languagesSelected: LiveData<List<ComboOption>>? = _languagesSelected
     private val _softSkillsSelected = MutableLiveData<List<ComboOption>>()
-    val softSkillsSelected: LiveData<List<ComboOption>> = _softSkillsSelected
+    val softSkillsSelected: LiveData<List<ComboOption>>? = _softSkillsSelected
     private val _skillsSelected = MutableLiveData<List<ComboOption>>()
-    val skillsSelected: LiveData<List<ComboOption>> = _skillsSelected
+    val skillsSelected: LiveData<List<ComboOption>>? = _skillsSelected
     private val viewModelJob = SupervisorJob()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private var remoteUsuario: RemoteUsuario = RemoteUsuario()
+    var remoteUsuario: RemoteUsuario = RemoteUsuario()
 
-    fun onSaveInfoClicked(onSaveSuccess: () -> Unit) {
+    fun onSaveInfoClicked(onSaveSuccess: () -> Unit, onSaveFailed: () -> Unit) {
         val candidatoInfoDTO = CandidatoInfoDTO(
             edad = _edad.value!!.toInt(),
             email = _email.value!!,
             experiencia = listOf(),
-            habilidadesBlandas =  softSkillsSelected.value!!.map {softSkills -> softSkills.id },
-            habilidadesTecnicas = skillsSelected.value!!.map { skills -> skills.id },
+            habilidadesBlandas =  softSkillsSelected?.value!!.map {softSkills -> softSkills.id },
+            habilidadesTecnicas = skillsSelected?.value!!.map { skills -> skills.id },
             id_pais = _countrySelected.value!![0].id,
-            idiomas = languagesSelected.value!!.map { languages -> languages.id },
+            idiomas = languagesSelected?.value!!.map { languages -> languages.id },
             informacionAcademica = listOf(),
             numero_telefono = _phone.value!!
         )
@@ -63,6 +63,8 @@ class PersonalDataViewModel: ViewModel() {
                 val response = remoteUsuario.saveCandidato(candidatoInfoDTO)
                 if(response.code().equals(200)) {
                     onSaveSuccess()
+                } else {
+                    onSaveFailed()
                 }
             } catch (e: Exception) {
 
@@ -94,7 +96,6 @@ class PersonalDataViewModel: ViewModel() {
 
     fun getInfoInicial(sharePreference: SharePreference) {
         getMetaData(sharePreference)
-        //getInfoUser(sharePreference)
     }
 
     fun getMetaData(sharePreference: SharePreference){
@@ -120,14 +121,14 @@ class PersonalDataViewModel: ViewModel() {
             try {
                 val response = remoteUsuario.getCandidato(sharePreference.getUserLogged()!!.usuario)
                 if(response.code().equals(200)) {
-                    _fullName.value = response.body()!!.usuario.nombre_completo
-                    _email.value = response.body()!!.usuario.email
-                    _phone.value = response.body()!!.numero_telefono
-                    _edad.value = response.body()!!.edad.toString()
-                    _softSkillsSelected.value = response.body()!!.habilidadesBlandas.toComboOptions()
-                    _skillsSelected.value = response.body()!!.habilidadesTecnicas.toComboOptions()
+                    _fullName.value = response.body()?.usuario?.nombre_completo
+                    _email.value = response.body()?.usuario?.email
+                    _phone.value = (response.body()?.numero_telefono)
+                    _edad.value = (response.body()?.edad ?: " ").toString()
+                    _softSkillsSelected.value = response.body()?.habilidadesBlandas?.toComboOptions()
+                    _skillsSelected.value = response.body()?.habilidadesTecnicas?.toComboOptions()
                     _countrySelected.value = _countries.value?.filter { it.id == response.body()!!.id_pais } ?: emptyList()
-                    _languagesSelected.value = response.body()!!.idiomas.toComboOptions()
+                    _languagesSelected.value = response.body()?.idiomas?.toComboOptions()
                 }
             } catch (e: Exception) {
 

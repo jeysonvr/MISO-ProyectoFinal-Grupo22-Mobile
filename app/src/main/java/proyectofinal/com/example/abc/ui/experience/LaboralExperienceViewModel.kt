@@ -20,10 +20,10 @@ import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Singleton
 @HiltViewModel
-class LaboralExperienceViewModel @Inject constructor() : ViewModel() {
+open class LaboralExperienceViewModel @Inject constructor(private val remoteUsuario: RemoteUsuario) : ViewModel() {
 
     private val _listExperience = MutableLiveData<List<ExperienciaOut>>()
-    val listExperience: LiveData<List<ExperienciaOut>> = _listExperience
+    val listExperience: LiveData<List<ExperienciaOut>>? = _listExperience
 
     private val _companyName = MutableLiveData<String>()
     val companyName: LiveData<String> = _companyName
@@ -41,8 +41,8 @@ class LaboralExperienceViewModel @Inject constructor() : ViewModel() {
     val rolSelected: LiveData<List<ComboOption>> = _rolSelected
     private val viewModelJob = SupervisorJob()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private var remoteUsuario: RemoteUsuario = RemoteUsuario()
-    private var idCandidato : Int? = null
+    var idCandidato : Int? = null
+
     fun onRolChanged(rol: List<ComboOption>) {
         _rolSelected.value = rol
     }
@@ -64,7 +64,7 @@ class LaboralExperienceViewModel @Inject constructor() : ViewModel() {
         _workHere.value = checked
     }
 
-    fun onSave(onSaveSuccess: () -> Unit) {
+    fun onSaveClicked(onSaveSuccess: () -> Unit, onSaveFailed: () -> Unit) {
         val experienciaLaboralDTO = ExperienciaLaboralDTO(
             experiencia = ExperienciaLabIn(
                 `actual` = if (_workHere.value!!) 1 else 0,
@@ -76,18 +76,23 @@ class LaboralExperienceViewModel @Inject constructor() : ViewModel() {
             ),
             id_candidato = idCandidato!!
         )
+        save(onSaveSuccess,experienciaLaboralDTO,onSaveFailed)
+    }
+
+    fun save(onSaveSuccess: () -> Unit,experienciaLaboralDTO: ExperienciaLaboralDTO,onSaveFailed: () -> Unit) {
         uiScope.launch {
             try {
                 val response = remoteUsuario.saveExperienciaLaboral(experienciaLaboralDTO)
-                if (response.code().equals(200)) {
+                if (response.code() == (200)) {
                     onSaveSuccess()
+                } else {
+                    onSaveFailed()
                 }
             } catch (e: Exception) {
 
             }
         }
     }
-
     fun getInfoUser(sharePreference: SharePreference){
         uiScope.launch {
             try {

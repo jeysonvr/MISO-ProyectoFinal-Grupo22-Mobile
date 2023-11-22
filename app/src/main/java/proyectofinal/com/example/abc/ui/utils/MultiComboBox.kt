@@ -43,7 +43,7 @@ fun MultiComboBox(
     options: List<ComboOption>,
     onOptionsChosen: (List<ComboOption>) -> Unit,
     modifier: Modifier = Modifier,
-    selectedIds: List<Int> = emptyList(),
+    selectedIds: List<Int>? = emptyList(),
 ) {
     var expanded by remember { mutableStateOf(false) }
     // when no options available, I want ComboBox to be disabled
@@ -51,11 +51,13 @@ fun MultiComboBox(
     var selectedOptionsList  = remember { mutableStateListOf<Int>() }
     selectedOptionsList.clear()
     //Initial setup of selected ids
-    if (selectedIds.isNotEmpty()){
+    if (selectedIds != null) {
+        if (selectedIds.isNotEmpty()){
 
 
-        selectedIds.forEach{
-            selectedOptionsList.add(it)
+            selectedIds.forEach{
+                selectedOptionsList.add(it)
+            }
         }
     }
 
@@ -151,7 +153,7 @@ fun SingleComboBox(
     options: List<ComboOption>,
     onOptionsChosen: (List<ComboOption>) -> Unit,
     modifier: Modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
-    selectedIds: List<Int> = emptyList(),
+    selectedIds: List<Int>? = emptyList(),
 ) {
     var expanded by remember { mutableStateOf(false) }
     // when no options available, I want ComboBox to be disabled
@@ -159,9 +161,10 @@ fun SingleComboBox(
     var selectedOptionsList  = remember { mutableStateListOf<Int>() }
     selectedOptionsList.clear()
     //Initial setup of selected ids
-    selectedIds.forEach{
-
-        selectedOptionsList.add(it)
+    if (selectedIds != null) {
+        selectedIds.forEach{
+            selectedOptionsList.add(it)
+        }
     }
 
     ExposedDropdownMenuBox(

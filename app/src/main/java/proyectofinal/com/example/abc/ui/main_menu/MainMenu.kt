@@ -1,6 +1,7 @@
 package proyectofinal.com.example.abc.ui.main_menu
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -9,13 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,15 +24,13 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import proyectofinal.com.example.abc.R
-import androidx.compose.foundation.clickable
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
-import proyectofinal.com.example.abc.ui.personal_data.PersonalDataScreen
+import proyectofinal.com.example.abc.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,7 +64,7 @@ fun MainScreen(navController: NavController) {
 }
 
 @Composable
-fun MainContent(padding: PaddingValues, navController: NavController) {
+private fun MainContent(padding: PaddingValues, navController: NavController) {
     Column(
         modifier = Modifier.padding(
             top = 96.dp,
@@ -116,18 +110,22 @@ fun MainContent(padding: PaddingValues, navController: NavController) {
                                 .fillMaxSize()
 
                         )
-                        Text(text = stringResource(id = R.string.profile), modifier = Modifier.constrainAs(contentDescription) {
-                            top.linkTo(parent.top, margin = 100.dp)
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        })
+                        Text(
+                            text = stringResource(id = R.string.profile),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.constrainAs(contentDescription) {
+                                top.linkTo(parent.top, margin = 100.dp)
+                                bottom.linkTo(parent.bottom)
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                            })
                     }
                     ConstraintLayout(
                         modifier = Modifier
                             .padding(start = 10.dp)
                             .fillMaxSize()
                             .weight(1f)
+                            .clickable { navController.navigate("TechnicTestScreen") }
                     ) {
                         val (image, contentDescription) = createRefs()
 
@@ -145,12 +143,15 @@ fun MainContent(padding: PaddingValues, navController: NavController) {
                                 }
                                 .fillMaxSize()
                         )
-                        Text(text = stringResource(id = R.string.technical_tests), modifier = Modifier.constrainAs(contentDescription) {
-                            top.linkTo(parent.top, margin = 100.dp)
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        })
+                        Text(
+                            text = stringResource(id = R.string.technical_tests),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.constrainAs(contentDescription) {
+                                top.linkTo(parent.top, margin = 100.dp)
+                                bottom.linkTo(parent.bottom)
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                            })
                     }
                 }
                 Row(
@@ -164,6 +165,7 @@ fun MainContent(padding: PaddingValues, navController: NavController) {
                             .padding(end = 10.dp)
                             .fillMaxSize()
                             .weight(1f)
+                            .clickable { navController.navigate("PerfEvalApplicantScreen") }
                     ) {
                         val (image, contentDescription) = createRefs()
 
@@ -181,18 +183,23 @@ fun MainContent(padding: PaddingValues, navController: NavController) {
                                 }
                                 .fillMaxSize()
                         )
-                        Text(text = stringResource(id = R.string.performance_evaluation), modifier = Modifier.constrainAs(contentDescription) {
-                            top.linkTo(parent.top, margin = 100.dp)
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        })
+                        Text(text = stringResource(id = R.string.performance_evaluation),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .constrainAs(contentDescription) {
+                                    top.linkTo(parent.top, margin = 100.dp)
+                                    bottom.linkTo(parent.bottom)
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                })
                     }
                     ConstraintLayout(
                         modifier = Modifier
                             .padding(start = 10.dp)
                             .fillMaxSize()
                             .weight(1f)
+                            .clickable { navController.navigate("InterviewScreenCandidate") }
                     ) {
                         val (image, contentDescription) = createRefs()
 
@@ -210,12 +217,15 @@ fun MainContent(padding: PaddingValues, navController: NavController) {
                                 }
                                 .fillMaxSize()
                         )
-                        Text(text = stringResource(id = R.string.interviews), modifier = Modifier.constrainAs(contentDescription) {
-                            top.linkTo(parent.top, margin = 100.dp)
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        })
+                        Text(
+                            text = stringResource(id = R.string.interviews),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.constrainAs(contentDescription) {
+                                top.linkTo(parent.top, margin = 100.dp)
+                                bottom.linkTo(parent.bottom)
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                            })
                     }
                 }
             }

@@ -3,7 +3,7 @@ package proyectofinal.com.example.abc.ui.sign_up
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import proyectofinal.com.example.abc.model.LoginDTO
+import com.google.gson.Gson
 import proyectofinal.com.example.abc.model.RegistroDTO
 import proyectofinal.com.example.abc.repository.RemoteUsuario
 import kotlinx.coroutines.CoroutineScope
@@ -18,8 +18,6 @@ class SignUpViewModel : ViewModel() {
     val email: LiveData<String> = _email
     private val _password = MutableLiveData<String>()
     val password: LiveData<String> = _password
-    private val _isRegistered = MutableLiveData<Boolean>()
-    val isRegistered: LiveData<Boolean> = _isRegistered
     private val viewModelJob = SupervisorJob()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private var remoteUsuario: RemoteUsuario = RemoteUsuario()
@@ -36,7 +34,7 @@ class SignUpViewModel : ViewModel() {
         _password.value = password
     }
 
-    fun onSignUpClicked() {
+    fun onSignUpClicked(onSignUpSuccess: () -> Unit, onSignUpFailed : () -> Unit) {
         val registroDTO = RegistroDTO(
             contrasena = _password.value!!,
             email = _email.value!!,
@@ -45,12 +43,15 @@ class SignUpViewModel : ViewModel() {
         )
         uiScope.launch {
             try {
+                //remoteUsuario.login(loginDTO)
                 val response = remoteUsuario.registro(registroDTO)
                 _fullName.value = ""
                 _email.value = ""
                 _password.value = ""
-                if(response.body().equals("successful!")) {
-                    _isRegistered.value = true
+                if (response.body().equals("successful!")) {
+                    onSignUpSuccess()
+                } else {
+                    onSignUpFailed()
                 }
 
             } catch (e: Exception) {
