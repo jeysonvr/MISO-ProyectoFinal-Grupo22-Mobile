@@ -110,30 +110,34 @@ class TechnicTestViewModel @Inject constructor(
     }
 
     fun onSaveAnswerClicked(onSaveSuccess: () -> Unit, onSaveFailed: () -> Unit) {
-        val answer = AnswerDTO(
-            idEvaluacion = idTest!!,
-            idPregunta = _question.value!!.id_pregunta,
-            idRespuesta = _selectedOption.value!!.id_respuesta
-        )
-        uiScope.launch {
-            try {
-                val response = remoteUsuario.answerQuestion(answer)
-                if (response.code() == (200)) {
-                    if (numQuestion == 5) {
-                        numQuestion = 0
-                        finishTest(onSaveSuccess = onSaveSuccess, onSaveFailed = onSaveFailed)
-                    } else {
-                        if (numQuestion == 4) {
-                            _buttonLabel.value = applicationContext.getString(R.string.send)
+        if (_selectedOption.value == null) {
+            onSaveFailed()
+        }else {
+            val answer = AnswerDTO(
+                idEvaluacion = idTest!!,
+                idPregunta = _question.value!!.id_pregunta,
+                idRespuesta = _selectedOption.value!!.id_respuesta
+            )
+            uiScope.launch {
+                try {
+                    val response = remoteUsuario.answerQuestion(answer)
+                    if (response.code() == (200)) {
+                        if (numQuestion == 5) {
+                            numQuestion = 0
+                            finishTest(onSaveSuccess = onSaveSuccess, onSaveFailed = onSaveFailed)
+                        } else {
+                            if (numQuestion == 4) {
+                                _buttonLabel.value = applicationContext.getString(R.string.send)
+                            }
+                            numQuestion++
+                            getQuestion(onSaveSuccess = onSaveSuccess, onSaveFailed = onSaveFailed)
                         }
-                        numQuestion++
-                        getQuestion(onSaveSuccess = onSaveSuccess, onSaveFailed = onSaveFailed)
+                    } else {
+                        onSaveFailed()
                     }
-                } else {
-                    onSaveFailed()
-                }
-            } catch (e: Exception) {
+                } catch (e: Exception) {
 
+                }
             }
         }
     }

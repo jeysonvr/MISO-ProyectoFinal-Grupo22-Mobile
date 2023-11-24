@@ -65,18 +65,22 @@ open class LaboralExperienceViewModel @Inject constructor(private val remoteUsua
     }
 
     fun onSaveClicked(onSaveSuccess: () -> Unit, onSaveFailed: () -> Unit) {
-        val experienciaLaboralDTO = ExperienciaLaboralDTO(
-            experiencia = ExperienciaLabIn(
-                `actual` = if (_workHere.value!!) 1 else 0,
-                fecha_fin = _finalDate.value!!,
-                fecha_inicio = _startDate.value!!,
-                id_rol = 1,
-                descripcion_actividades = _description.value!!,
-                nombre_empresa = _companyName.value!!
-            ),
-            id_candidato = idCandidato!!
-        )
-        save(onSaveSuccess,experienciaLaboralDTO,onSaveFailed)
+        if ( _workHere.value == null || _startDate.value.isNullOrEmpty() || _finalDate.value.isNullOrEmpty() || _companyName.value.isNullOrEmpty() || _description.value.isNullOrEmpty()) {
+            onSaveFailed()
+        } else {
+            val experienciaLaboralDTO = ExperienciaLaboralDTO(
+                experiencia = ExperienciaLabIn(
+                    `actual` = if (_workHere.value?: false) 1 else 0,
+                    fecha_fin = _finalDate.value!!,
+                    fecha_inicio = _startDate.value!!,
+                    id_rol = 1,
+                    descripcion_actividades = _description.value!!,
+                    nombre_empresa = _companyName.value!!
+                ),
+                id_candidato = idCandidato!!
+            )
+            save(onSaveSuccess, experienciaLaboralDTO, onSaveFailed)
+        }
     }
 
     fun save(onSaveSuccess: () -> Unit,experienciaLaboralDTO: ExperienciaLaboralDTO,onSaveFailed: () -> Unit) {

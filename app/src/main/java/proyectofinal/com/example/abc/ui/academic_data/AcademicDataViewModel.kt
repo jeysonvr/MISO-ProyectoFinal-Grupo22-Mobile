@@ -58,35 +58,40 @@ class AcademicDataViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onSaveClicked( onSucess: () -> Unit, onSaveFailed: () -> Unit) {
-        val academicaDTO = AcademicaDTO(
-            id_candidato = idCandidato!!,
-            informacionAcademica = InformacionAcademicaIn(
-                institucion = _instituteEducation.value!!,
-                titulo = _carrer.value!!,
-                fecha_fin = _finalYear.value!!,
-                fecha_inicio = _startYear.value!!,
-                en_curso = inProgress.value!!
+        if (_instituteEducation.value.isNullOrEmpty() || _carrer.value.isNullOrEmpty() || _startYear.value.isNullOrEmpty() || _finalYear.value.isNullOrEmpty()) {
+            onSaveFailed()
+        } else {
+            val academicaDTO = AcademicaDTO(
+                id_candidato = idCandidato!!,
+                informacionAcademica = InformacionAcademicaIn(
+                    institucion = _instituteEducation.value?: "",
+                    titulo = _carrer.value?: "",
+                    fecha_fin = _finalYear.value?: "",
+                    fecha_inicio = _startYear.value?: "",
+                    en_curso = inProgress.value?: false
+                )
             )
-        )
-        uiScope.launch {
-            try {
-                val response = remoteUsuario.saveInformacionAcademica(academicaDTO)
-                if (response.code() == (200)) {
-                    onSucess()
-                } else {
-                    onSaveFailed()
-                }
-            } catch (e: Exception) {
+            uiScope.launch {
+                try {
+                    val response = remoteUsuario.saveInformacionAcademica(academicaDTO)
+                    if (response.code() == (200)) {
+                        onSucess()
+                    } else {
+                        onSaveFailed()
+                    }
+                } catch (e: Exception) {
 
+                }
             }
         }
+
     }
 
     fun getInfoUser(sharePreference: SharePreference) {
         uiScope.launch {
             try {
                 val response = remoteUsuario.getCandidato(sharePreference.getUserLogged()!!.usuario)
-                if (response.code().equals(200)) {
+                if (response.code()==(200)) {
                     idCandidato = response.body()!!.id
                     _listAcademic.value = response.body()!!.informacionAcademica
                 }

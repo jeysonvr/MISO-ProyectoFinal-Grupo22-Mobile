@@ -22,6 +22,7 @@ import proyectofinal.com.example.abc.model.RegistroDTO
 import proyectofinal.com.example.abc.model.StartTestOutDTO
 import proyectofinal.com.example.abc.model.TestResponseDTO
 import proyectofinal.com.example.abc.model.UsersOutDto
+import proyectofinal.com.example.abc.model.RegistroOutDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -37,7 +38,7 @@ interface APIService {
     @POST("/registro/usuario")
     suspend fun registro(
         @Body registroDTO: RegistroDTO
-    ): Response<String>
+    ): Response<RegistroOutDTO>
 
 
     @POST("/registro/login")

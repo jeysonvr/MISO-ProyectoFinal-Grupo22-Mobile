@@ -35,29 +35,32 @@ class SignUpViewModel : ViewModel() {
     }
 
     fun onSignUpClicked(onSignUpSuccess: () -> Unit, onSignUpFailed : () -> Unit) {
-        val registroDTO = RegistroDTO(
-            contrasena = _password.value!!,
-            email = _email.value!!,
-            id_tipo_usuario = 2,
-            nombre_completo = _fullName.value!!
-        )
-        uiScope.launch {
-            try {
-                //remoteUsuario.login(loginDTO)
-                val response = remoteUsuario.registro(registroDTO)
-                _fullName.value = ""
-                _email.value = ""
-                _password.value = ""
-                if (response.body().equals("successful!")) {
-                    onSignUpSuccess()
-                } else {
-                    onSignUpFailed()
+        if (_email.value.isNullOrEmpty() || _fullName.value.isNullOrEmpty() || _password.value.isNullOrEmpty()) {
+            onSignUpFailed()
+        } else {
+            val registroDTO = RegistroDTO(
+                contrasena = _password.value!!,
+                email = _email.value!!,
+                id_tipo_usuario = 2,
+                nombre_completo = _fullName.value!!
+            )
+            uiScope.launch {
+                try {
+                    //remoteUsuario.login(loginDTO)
+                    val response = remoteUsuario.registro(registroDTO)
+                    _fullName.value = ""
+                    _email.value = ""
+                    _password.value = ""
+                    if (response.code() == 201) {
+                        onSignUpSuccess()
+                    } else {
+                        onSignUpFailed()
+                    }
+
+                } catch (e: Exception) {
+
                 }
-
-            } catch (e: Exception) {
-
             }
         }
-
     }
 }

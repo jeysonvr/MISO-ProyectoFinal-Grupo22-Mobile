@@ -43,8 +43,10 @@ class NewContractViewModel @Inject constructor(private val remoteUsuario: Remote
     }
 
     fun onCompanyChanged(company: List<ComboOption>) {
-        _companySelected.value = company
-        getProjects(_companySelected.value!![0].id)
+        if (company.isNotEmpty()) {
+            _companySelected.value = company
+            getProjects(_companySelected.value!![0].id)
+        }
     }
 
     fun onProjectChanged(project: List<ComboOption>) {

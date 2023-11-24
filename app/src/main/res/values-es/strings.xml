@@ -67,4 +67,6 @@
 
     <string name="error_generic">Error creando el registro.</string>
     <string name="test_completed">Ha terminado la prueba satisfactoriamente.</string>
+
+    <string name="succes_record">El registro ha sido creado.</string>
 </resources>

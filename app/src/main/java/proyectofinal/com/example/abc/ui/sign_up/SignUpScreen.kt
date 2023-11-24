@@ -96,7 +96,7 @@ fun SignUpScreen(navController: NavController) {
                     onTextFieldChanged = { viewModel.onEmailChanged(it) })
             }
             item {
-                TextFieldABC(
+                TextFieldPasswordABC(
                     textField = password,
                     stringResource(id = R.string.password),
                     keyboardController = keyboardController,
@@ -111,6 +111,7 @@ fun SignUpScreen(navController: NavController) {
                                     inclusive = true
                                 }
                             }
+                            mToast(mContext, mContext.getString(R.string.succes_record))
                         }, onSignUpFailed = {
                             mToast(mContext, mContext.getString(R.string.error_generic))
                         })

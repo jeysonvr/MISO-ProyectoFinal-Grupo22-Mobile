@@ -68,4 +68,6 @@
     <string name="error_generic">Error creating the record.</string>
 
     <string name="test_completed">Has completed the test successfully.</string>
+
+    <string name="succes_record">The record has been created.</string>
 </resources>

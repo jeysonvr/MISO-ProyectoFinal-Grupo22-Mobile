@@ -23,10 +23,11 @@ import proyectofinal.com.example.abc.model.RegistroDTO
 import proyectofinal.com.example.abc.model.StartTestOutDTO
 import proyectofinal.com.example.abc.model.TestResponseDTO
 import proyectofinal.com.example.abc.model.UsersOutDto
+import proyectofinal.com.example.abc.model.RegistroOutDTO
 import retrofit2.Response
 
 class RemoteUsuario {
-    suspend fun registro(registroDTO: RegistroDTO): Response<String> {
+    suspend fun registro(registroDTO: RegistroDTO): Response<RegistroOutDTO> {
         return RetrofitHelper.service.registro(registroDTO)
     }
     suspend fun login(loginDTO: LoginDTO): Response<LoginResponseDTO> {

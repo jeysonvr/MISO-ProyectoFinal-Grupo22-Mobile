@@ -43,7 +43,7 @@ class PerformanEvaluationViewModel @Inject constructor(private val remoteUsuario
         val user = sharePreference.getUserLogged()!!
         uiScope.launch {
             try {
-                val response = remoteUsuario.getContracts(id = 6, idTipoUser = user.id_tipo_usuario)
+                val response = remoteUsuario.getContracts(id = user.id, idTipoUser = user.id_tipo_usuario)
                 if (response.code() == 200) {
                     _applicant.value =
                         response.body()?.filter { it.evaluacion_desempeño == null }?.map {

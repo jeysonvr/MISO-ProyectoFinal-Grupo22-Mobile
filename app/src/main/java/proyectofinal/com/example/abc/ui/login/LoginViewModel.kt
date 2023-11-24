@@ -36,37 +36,41 @@ class LoginViewModel : ViewModel() {
         onLoginCompanySucces: () -> Unit,
         onLoginError: () -> Unit
     ) {
-        val loginDTO = LoginDTO(
-            contrasena = _password.value!!,
-            email = _email.value!!
-        )
-        uiScope.launch {
-            try {
-                val response = remoteUsuario.login(loginDTO)
-                _email.value = ""
-                _password.value = ""
-                if (response.code() == (200)) {
-                    savedPrefUser(response.body()!!, sharePreference)
+        if (_email.value.isNullOrEmpty() || _password.value.isNullOrEmpty()) {
+            onLoginError()
+        } else {
+            val loginDTO = LoginDTO(
+                contrasena = _password.value!!,
+                email = _email.value!!
+            )
+            uiScope.launch {
+                try {
+                    val response = remoteUsuario.login(loginDTO)
+                    _email.value = ""
+                    _password.value = ""
+                    if (response.code() == (200)) {
+                        savedPrefUser(response.body()!!, sharePreference)
 
-                    when (response.body()!!.id_tipo_usuario) {
-                        1 -> {
-                            onLoginAdminSucces()
-                        }
+                        when (response.body()!!.id_tipo_usuario) {
+                            1 -> {
+                                onLoginAdminSucces()
+                            }
 
-                        2 -> {
-                            onLoginCandidateSucces()
-                        }
+                            2 -> {
+                                onLoginCandidateSucces()
+                            }
 
-                        3 -> {
-                            onLoginCompanySucces()
+                            3 -> {
+                                onLoginCompanySucces()
+                            }
                         }
+                    } else {
+                        onLoginError()
                     }
-                } else {
-                    onLoginError()
+
+                } catch (e: Exception) {
+
                 }
-
-            } catch (e: Exception) {
-
             }
         }
     }
