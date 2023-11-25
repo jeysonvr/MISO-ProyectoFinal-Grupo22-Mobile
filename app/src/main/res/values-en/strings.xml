@@ -24,7 +24,8 @@
     <string name="technical_tests">Technical tests</string>
     <string name="performance_evaluation">Performance evaluation</string>
     <string name="interviews">Interviews</string>
-
+    <string name="new_contract">New contract record</string>
+    <string name="scheduled_interviews">Scheduled interviews</string>
 
     <string name="name">Name</string>
     <string name="age">Age</string>
@@ -34,10 +35,38 @@
     <string name="country">Country</string>
     <string name="skills">Skills</string>
     <string name="personal_data">Personal data</string>
+    <string name="applicants">Applicants</string>
+    <string name="applicant">Applicant</string>
+    <string name="company">Company</string>
+    <string name="project">Project</string>
 
     <string name="full_name">Full name</string>
     <string name="register">Register</string>
     <string name="sign_up">Sign up</string>
     <string name="already_account">Already have an account?</string>
     <string name="hello">Hello,</string>
+
+    <string name="no_experience">No work experience has been recorded.</string>
+    <string name="no_academic_data">No academic data has been recorded.</string>
+    <string name="no_tecnical_test">No technical test has been recorded.</string>
+    <string name="no_scheduled_interviews">No scheduled interviews has been recorded.</string>
+
+    <string name="tecnic_test">Technical tests</string>
+    <string name="check_results">Check results</string>
+
+    <string name="next">Next</string>
+    <string name="send">Send</string>
+
+    <string name="error_contract">This contract already exist for this company and employee.</string>
+    <string name="save_contract">Contract save successfully</string>
+    <string name="save_evaluation">The candidate was evaluated successfully.</string>
+    <string name="active">Open</string>
+    <string name="inactive">Completed</string>
+    <string name="comment">Comments</string>
+
+
+    <string name="error_generic">Error creating the record.</string>
+    <string name="test_completed">Has completed the test successfully.</string>
+
+    <string name="succes_record">The record has been created.</string>
 </resources>

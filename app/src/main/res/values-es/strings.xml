@@ -24,7 +24,8 @@
     <string name="technical_tests">Pruebas técnicas</string>
     <string name="performance_evaluation">Evaluación de desempeño</string>
     <string name="interviews">Entrevistas</string>
-
+    <string name="new_contract">Registro de nuevo contrato</string>
+    <string name="scheduled_interviews">Entrevistas programadas</string>
 
     <string name="name">Nombre</string>
     <string name="age">Edad</string>
@@ -34,10 +35,38 @@
     <string name="country">País</string>
     <string name="skills">Habilidades técnicas</string>
     <string name="personal_data">Datos personales</string>
+    <string name="applicants">Candidatos</string>
+    <string name="applicant">Candidato</string>
+    <string name="company">Empresa</string>
+    <string name="project">Proyecto</string>
 
     <string name="full_name">Nombre completo</string>
     <string name="register">Registrarme</string>
     <string name="sign_up">Registrarme</string>
     <string name="already_account">¿Ya tienes una cuenta?</string>
     <string name="hello">Hola,</string>
+
+    <string name="no_experience">No se han registrado experiencia laboral.</string>
+    <string name="no_academic_data">No se han registrado datos academicos.</string>
+    <string name="no_tecnical_test">No se han registrado pruebas tecnicas.</string>
+    <string name="no_scheduled_interviews">No se han registrado entrevistas programadas.</string>
+
+    <string name="tecnic_test">Pruebas técnicas</string>
+    <string name="check_results">Ver resultados</string>
+
+    <string name="next">Siguiente</string>
+    <string name="send">Envíar</string>
+
+    <string name="error_contract">Este contrato ya existe para esta compañia y empleado.</string>
+    <string name="save_contract">Contrato guardado existosamente.</string>
+    <string name="save_evaluation">Se evaluó el candidato correctamente.</string>
+    <string name="active">Abierta</string>
+    <string name="inactive">Finalizada</string>
+
+    <string name="comment">Comentarios</string>
+
+    <string name="error_generic">Error creando el registro.</string>
+    <string name="test_completed">Ha terminado la prueba satisfactoriamente.</string>
+
+    <string name="succes_record">El registro ha sido creado.</string>
 </resources>

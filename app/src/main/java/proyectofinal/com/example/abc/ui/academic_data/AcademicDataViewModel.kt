@@ -30,7 +30,7 @@ class AcademicDataViewModel @Inject constructor() : ViewModel() {
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
     private val _listAcademic = MutableLiveData<List<InformacionAcademicaOut>>()
-    val listAcademic: LiveData<List<InformacionAcademicaOut>> = _listAcademic
+    val listAcademic: LiveData<List<InformacionAcademicaOut>>? = _listAcademic
     private val viewModelJob = SupervisorJob()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private var remoteUsuario: RemoteUsuario = RemoteUsuario()
@@ -49,10 +49,6 @@ class AcademicDataViewModel @Inject constructor() : ViewModel() {
         _inProgress.value = checked
     }
 
-    fun onLoginClicked() {
-        TODO("Not yet implemented")
-    }
-
     fun onInstituteEducationChanged(instituteEducation: String) {
         _instituteEducation.value = instituteEducation
     }
@@ -61,34 +57,41 @@ class AcademicDataViewModel @Inject constructor() : ViewModel() {
         _finalYear.value = finalYear
     }
 
-    fun onSaveClicked( onSucess: () -> Unit) {
-        val academicaDTO = AcademicaDTO(
-            id_candidato = idCandidato!!,
-            informacionAcademica = InformacionAcademicaIn(
-                institucion = _instituteEducation.value!!,
-                titulo = _carrer.value!!,
-                fecha_fin = _finalYear.value!!,
-                fecha_inicio = _startYear.value!!,
-                en_curso = inProgress.value!!
+    fun onSaveClicked( onSucess: () -> Unit, onSaveFailed: () -> Unit) {
+        if (_instituteEducation.value.isNullOrEmpty() || _carrer.value.isNullOrEmpty() || _startYear.value.isNullOrEmpty() || _finalYear.value.isNullOrEmpty()) {
+            onSaveFailed()
+        } else {
+            val academicaDTO = AcademicaDTO(
+                id_candidato = idCandidato!!,
+                informacionAcademica = InformacionAcademicaIn(
+                    institucion = _instituteEducation.value?: "",
+                    titulo = _carrer.value?: "",
+                    fecha_fin = _finalYear.value?: "",
+                    fecha_inicio = _startYear.value?: "",
+                    en_curso = inProgress.value?: false
+                )
             )
-        )
-        uiScope.launch {
-            try {
-                val response = remoteUsuario.saveInformacionAcademica(academicaDTO)
-                if (response.code().equals(200)) {
-                    onSucess()
-                }
-            } catch (e: Exception) {
+            uiScope.launch {
+                try {
+                    val response = remoteUsuario.saveInformacionAcademica(academicaDTO)
+                    if (response.code() == (200)) {
+                        onSucess()
+                    } else {
+                        onSaveFailed()
+                    }
+                } catch (e: Exception) {
 
+                }
             }
         }
+
     }
 
     fun getInfoUser(sharePreference: SharePreference) {
         uiScope.launch {
             try {
                 val response = remoteUsuario.getCandidato(sharePreference.getUserLogged()!!.usuario)
-                if (response.code().equals(200)) {
+                if (response.code()==(200)) {
                     idCandidato = response.body()!!.id
                     _listAcademic.value = response.body()!!.informacionAcademica
                 }

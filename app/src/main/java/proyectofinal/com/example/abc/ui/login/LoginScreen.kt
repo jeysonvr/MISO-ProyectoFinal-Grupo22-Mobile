@@ -21,19 +21,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import proyectofinal.com.example.abc.R
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import proyectofinal.com.example.abc.ui.utils.TextFieldABC
-import proyectofinal.com.example.abc.ui.main_menu.MainScreen
 import proyectofinal.com.example.abc.ui.utils.TextFieldPasswordABC
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import proyectofinal.com.example.abc.ui.utils.SharePreference
+import proyectofinal.com.example.abc.ui.utils.mToast
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -42,7 +41,8 @@ fun LoginScreen(navController: NavController) {
     val email: String by viewModel.email.observeAsState(initial = "")
     val password: String by viewModel.password.observeAsState(initial = "")
     val keyboardController = LocalSoftwareKeyboardController.current
-    val sharePreference = SharePreference(LocalContext.current)
+    val mContext = LocalContext.current
+    val sharePreference = SharePreference(mContext)
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.background_login),
@@ -98,13 +98,29 @@ fun LoginScreen(navController: NavController) {
             item {
                 Button(
                     onClick = {
-                        viewModel.onLoginClicked(sharePreference, onLoginSucces = {
+                        viewModel.onLoginClicked(sharePreference, onLoginCandidateSucces = {
                             navController.navigate("mainScreenNavigation") {
                                 popUpTo("welcome") {
                                     inclusive = true
                                 }
                             }
-                        })
+                        },
+                            onLoginCompanySucces = {
+                                navController.navigate("mainCompanyNavigation") {
+                                    popUpTo("welcome") {
+                                        inclusive = true
+                                    }
+                                }
+                            },
+                            onLoginAdminSucces = {
+                                navController.navigate("mainAdminNavigation") {
+                                    popUpTo("welcome") {
+                                        inclusive = true
+                                    }
+                                }
+                            }, onLoginError = {
+                                mToast(mContext, "User or password incorrect")
+                            })
                     },
 
                     modifier = Modifier

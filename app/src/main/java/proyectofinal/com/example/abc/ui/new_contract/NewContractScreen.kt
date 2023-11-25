@@ -1,22 +1,17 @@
-package proyectofinal.com.example.abc.ui.skills
+package proyectofinal.com.example.abc.ui.new_contract
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -36,25 +31,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import proyectofinal.com.example.abc.R
 import proyectofinal.com.example.abc.ui.utils.ComboOption
-import proyectofinal.com.example.abc.ui.utils.MultiComboBox
+import proyectofinal.com.example.abc.ui.utils.SharePreference
+import proyectofinal.com.example.abc.ui.utils.SingleComboBox
+import proyectofinal.com.example.abc.ui.utils.mToast
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
-@Preview
 @Composable
-fun SkillsScreen() {
-    val skillsViewModel = SkillsViewModel()
+fun NewContractScreen(
+    navController: NavController,
+    viewModel: NewContractViewModel = hiltViewModel()
+) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val keyboardController = LocalSoftwareKeyboardController.current
     Scaffold(
@@ -73,17 +70,9 @@ fun SkillsScreen() {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
                             contentDescription = "Localized description"
                         )
                     }
@@ -92,29 +81,36 @@ fun SkillsScreen() {
             )
         },
     ) { innerPadding ->
-        MainContentAdd(innerPadding, skillsViewModel, keyboardController)
+        MainContent(innerPadding, viewModel, keyboardController, navController)
     }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun MainContentAdd(
-    padding: PaddingValues, skillsViewModel: SkillsViewModel,
-    keyboardController: SoftwareKeyboardController?
+private fun MainContent(
+    padding: PaddingValues, newContractViewModel: NewContractViewModel,
+    keyboardController: SoftwareKeyboardController?,
+    navController: NavController
 ) {
-    val labelSkills = "Skills"
-    val listSkillsAvailable: List<ComboOption> by skillsViewModel.listSkillsAvailable.observeAsState(
-        initial =
-        listOf(
-            ComboOption("Java", 1),
-            ComboOption("Html", 2),
-            ComboOption("CSS", 3),
-            ComboOption("Kotlin", 4)
-        )
-    )
-    val listSkillSelected: List<ComboOption> by skillsViewModel.listSkillsSelected.observeAsState(
+    val applicant: List<ComboOption> by newContractViewModel.applicant.observeAsState(initial = listOf())
+    val company: List<ComboOption> by newContractViewModel.company.observeAsState(initial = listOf())
+    val project: List<ComboOption> by newContractViewModel.project.observeAsState(initial = listOf())
+    val rol: List<ComboOption> by newContractViewModel.rol.observeAsState(initial = listOf())
+    val applicantSelected: List<ComboOption>? by newContractViewModel.applicantSelected.observeAsState(
         initial = listOf()
     )
+    val companySelected: List<ComboOption>? by newContractViewModel.companySelected!!.observeAsState(
+        initial = listOf()
+    )
+    val projectSelected: List<ComboOption>? by newContractViewModel.projectSelected!!.observeAsState(
+        initial = listOf()
+    )
+    val rolSelected: List<ComboOption>? by newContractViewModel.rolSelected!!.observeAsState(
+        initial = listOf()
+    )
+    val mContext = LocalContext.current
+    val sharePreference = SharePreference(mContext)
+    newContractViewModel.getInfoInicial(sharePreference)
     LazyColumn(
         modifier = Modifier.padding(
             top = 96.dp,
@@ -126,7 +122,7 @@ fun MainContentAdd(
     {
         item {
             Text(
-                text = labelSkills,
+                text = stringResource(id = R.string.new_contract),
                 style = MaterialTheme.typography.titleLarge,
                 color = Color.Black
             )
@@ -150,23 +146,42 @@ fun MainContentAdd(
             )
         }
         item {
-            MultiComboBox(
-                labelText = labelSkills,
-                options = listSkillsAvailable,
-                onOptionsChosen = { skillsViewModel.onListSkillsSelectedChanged(it) },
-                selectedIds = listSkillSelected.map { it.id })
+            SingleComboBox(
+                labelText = stringResource(id = R.string.applicant),
+                options = applicant,
+                modifier = Modifier.fillMaxWidth(),
+                onOptionsChosen = { newContractViewModel.onApplicantChanged(it) },
+                selectedIds = applicantSelected?.map { it.id })
         }
         item {
-            Column(modifier = Modifier.padding(top = 20.dp)) {
-                for (skill in listSkillSelected){
-                    skillSelectedConstrain(skill,skillsViewModel)
-                }
-            }
+            SingleComboBox(
+                labelText = stringResource(id = R.string.company),
+                options = company,
+                modifier = Modifier.fillMaxWidth(),
+                onOptionsChosen = { newContractViewModel.onCompanyChanged(it) },
+                selectedIds = companySelected?.map { it.id }
+            )
+        }
+        item {
+            SingleComboBox(
+                labelText = stringResource(id = R.string.project),
+                options = project,
+                modifier = Modifier.fillMaxWidth(),
+                onOptionsChosen = { newContractViewModel.onProjectChanged(it) },
+                selectedIds = projectSelected?.map { it.id })
+        }
+        item {
+            SingleComboBox(
+                labelText = stringResource(id = R.string.rol),
+                options = rol,
+                modifier = Modifier.fillMaxWidth(),
+                onOptionsChosen = { newContractViewModel.onRolChanged(it) },
+                selectedIds = rolSelected?.map { it.id })
         }
         item {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.popBackStack() },
                     modifier = Modifier
                         .padding(end = 20.dp, top = 70.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -175,10 +190,25 @@ fun MainContentAdd(
                     shape = RectangleShape,
                     border = BorderStroke(1.dp, Color.Black),
                 ) {
-                    Text(text = "Cancelar", color = Color.Black)
+                    Text(text = stringResource(id = R.string.cancel), color = Color.Black)
                 }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        newContractViewModel.onSaveInfoClicked(
+                            onSaveSuccess = {
+                                navController.popBackStack()
+                                mToast(
+                                    context = mContext,
+                                    message = mContext.getString(R.string.save_contract)
+                                )
+                            },
+                            onSaveFailed = {
+                                mToast(
+                                    context = mContext,
+                                    message = mContext.getString(R.string.error_contract)
+                                )
+                            })
+                    },
 
                     modifier = Modifier
                         .padding(start = 20.dp, top = 70.dp),
@@ -187,47 +217,10 @@ fun MainContentAdd(
                     ),
                     shape = RectangleShape,
                 ) {
-                    Text(text = "Guardar", color = Color.White)
+                    Text(text = stringResource(id = R.string.save), color = Color.White)
                 }
             }
         }
 
-    }
-}
-
-@Composable
-fun skillSelectedConstrain(skill : ComboOption,skillsViewModel: SkillsViewModel) {
-    ConstraintLayout(
-        modifier = Modifier
-            .height(60.dp)
-            .width(160.dp)
-            .padding(top = 20.dp)
-            .background(colorResource(id = R.color.borderText))
-    ) {
-        val (textField, erase) = createRefs()
-        Text(
-            modifier = Modifier
-                .constrainAs(textField) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start, margin = 5.dp)
-                    bottom.linkTo(parent.bottom)
-                    end.linkTo(erase.start)
-                    width = Dimension.preferredWrapContent
-                }, text = skill.descripcion,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Image(
-            painter = painterResource(id = R.drawable.img_close),
-            contentDescription = "close",
-            modifier = Modifier.constrainAs(erase){
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.bottom)
-                end.linkTo(parent.end, margin = 5.dp)
-            }.clickable {
-                skillsViewModel.onClickErased(skill.id)
-            }
-
-        )
     }
 }

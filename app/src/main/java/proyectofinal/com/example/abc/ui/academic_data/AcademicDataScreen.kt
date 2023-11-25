@@ -111,7 +111,7 @@ fun MainContent(
     keyboardController: SoftwareKeyboardController?
 ) {
     val sharePreference = SharePreference(LocalContext.current)
-    val listAcademic : List<InformacionAcademicaOut> by academicDataViewModel.listAcademic.observeAsState(initial = listOf())
+    val listAcademic : List<InformacionAcademicaOut>? by academicDataViewModel.listAcademic!!.observeAsState(initial = listOf())
     academicDataViewModel.getInfoUser(sharePreference = sharePreference)
     LazyColumn(
         modifier = Modifier.padding(
@@ -147,14 +147,20 @@ fun MainContent(
                     .width(200.dp)
             )
         }
-        if (listAcademic.isNotEmpty()) {
-            listAcademic.forEach {
+        if (listAcademic?.isNotEmpty() == true) {
+            listAcademic!!.forEach {
                 item {
                     itemAcademicData(it.institucion, it.titulo, it.fecha_inicio, it.fecha_fin)
                 }
             }
         } else {
-
+            item {
+                Text(
+                    text = stringResource(id = R.string.no_academic_data),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.Black
+                )
+            }
         }
 
 

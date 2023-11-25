@@ -41,7 +41,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import proyectofinal.com.example.abc.R
 import androidx.compose.ui.platform.LocalContext
@@ -51,9 +50,11 @@ import androidx.navigation.NavController
 import proyectofinal.com.example.abc.ui.utils.ComboOption
 import proyectofinal.com.example.abc.ui.utils.SharePreference
 import proyectofinal.com.example.abc.ui.utils.SingleComboBox
-import proyectofinal.com.example.abc.ui.academic_data.AcademicDataViewModel
 import proyectofinal.com.example.abc.ui.utils.TextFieldABC
+import org.junit.experimental.categories.Categories.ExcludeCategory
+import proyectofinal.com.example.abc.ui.utils.mToast
 
+@ExcludeCategory
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun LaboralExperienceAddScreen(navController: NavController,viewModel: LaboralExperienceViewModel = hiltViewModel()) {
@@ -105,7 +106,8 @@ fun MainContentAdd(
     val rolSelected: List<ComboOption> by laboralExperienceViewModel.rolSelected.observeAsState(
         initial = listOf()
     )
-    val sharePreference = SharePreference(LocalContext.current)
+    val mContext = LocalContext.current
+    val sharePreference = SharePreference(mContext)
     laboralExperienceViewModel.getMetaData(sharePreference = sharePreference)
     LazyColumn(
         modifier = Modifier.padding(
@@ -211,13 +213,18 @@ fun MainContentAdd(
                     Text(text = stringResource(id = R.string.cancel), color = Color.Black)
                 }
                 Button(
-                    onClick = { laboralExperienceViewModel.onSave(
+                    onClick = { laboralExperienceViewModel.onSaveClicked(
                         onSaveSuccess = {
                             navController.navigate("LaboralExperienceScreen") {
                                 popUpTo("LaboralExperienceScreen") {
                                     inclusive = true
                                 }
                             }
+                        },onSaveFailed = {
+                            mToast(
+                                context = mContext,
+                                message = mContext.getString(R.string.error_generic)
+                            )
                         }
                     ) },
 
